@@ -45,7 +45,7 @@ public:
         if (Country == "Ukraine" && City == "Lviv") return true;
         else return false;
     }
-    string printInfoAboutPerson() const
+    virtual string printInfo() const
     {
         return  "Full Name:" + fullName + "\nDay of birth:" + to_string(d) + "." + to_string(m) + "." + to_string(y) +
                 "\nCountry:" + Country + "\nCity:" + City + "\nTelephone number:" + TelephoneNumber;
@@ -66,7 +66,7 @@ public:
     Doctor(string fullName, int d, int m, int y, string Country, string City, string TelephoneNumber,
            string specialization, int numberOfPatients, int salary, string category, string degree)
         :Person(fullName, d, m, y, Country, City, TelephoneNumber), specialization(specialization),
-        numberOfPatients(numberOfPatients), salary(salary), category(category), degree(degree)
+        numberOfPatients(numberOfPatients), category(category), degree(degree), salary(salary)
         {
             if (specialization.empty()) throw invalid_argument("Empty string!");
             if (numberOfPatients < 0) throw invalid_argument("Invalid number!");
@@ -120,9 +120,9 @@ public:
             else if (category == "Expert") return 3000 * 0.9 * numberOfPatients;
         }
     }
-    string printInfoAboutDoctor() const
+    string printInfo() const override
     {
-        return Person::printInfoAboutPerson() + "\nSpecialization:" + specialization + "\nNumber of patients:" + to_string(numberOfPatients) +
+        return Person::printInfo() + "\nSpecialization:" + specialization + "\nNumber of patients:" + to_string(numberOfPatients) +
                 "\nSalary:" + to_string(salary) + "\nCategory:" + category + "\nDegree:" + degree;
     }
     string getSpecialization() const
@@ -153,9 +153,9 @@ public:
             if(serviceLife < 0) throw invalid_argument("Invalid service life!");
         }
     Soldier() : Person(), rank("None"), serviceLife(0), armament("None"), militaryServiceType(army){};
-    string printInfoAboutSoldier() const
+    string printInfo() const override
     {
-        return Person::printInfoAboutPerson() + "\nRank:" + rank + "\nService life:" + to_string(serviceLife) +
+        return Person::printInfo() + "\nRank:" + rank + "\nService life:" + to_string(serviceLife) +
                 "\nArmament:" + armament + "\nMilitary service:" + to_string(militaryServiceType);
     }
     void fight()
@@ -207,53 +207,135 @@ int main()
 {
     try
     {
-        Doctor doc1("Ivanov Ivan Ivanovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "Nurse", 5, 1000, "General", "Junior");
-        Doctor doc2("Petrov Petr Petrovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "Dentist", 10, 1000, "Specialist", "Junior");
-        Doctor doc3("Sidorov Sidor Sidorovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "Surgery", 32, 1000, "Expert", "Junior");
-        Doctor doc4("Kuznetsov Kuznet Kuznetovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "General", 15, 1000, "Specialist", "Middle");
-        Doctor doc5("Ivanov Ivan Ivanovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "General", 2, 1000, "Expert", "Senior");
-
-        Doctor *doc[5] = {&doc1, &doc2, &doc3, &doc4, &doc5};
-        for (int i = 0; i < 5; i++)
+        bool flag = true;
+        vector <Person*> people;
+        vector <Doctor*> doctors;
+        vector <Soldier*> soldiers;
+        while (flag)
         {
-            for (int j = 0; j < 5; j++)
+
+            cout << "1. Create person" << endl;
+            cout << "2. Create doctor" << endl;
+            cout << "3. Create soldier" << endl;
+            cout << "4. Print info about all people" << endl;
+            cout << "5. Exit" << endl;
+            cout << "------------------------------------------" << endl;
+            int choice;
+            cin >> choice;
+            if (choice == 1)
             {
-                if (doc[i]->CostOfConsultation() > doc[j]->CostOfConsultation())
+                string fullName, Country, City, TelephoneNumber;
+                int d, m, y;
+                cout << "Enter full name:" << endl;
+                cin >> fullName;
+                cout << "Enter date of birth:" << endl;
+                cin >> d >> m >> y;
+                cout << "Enter country:" << endl;
+                cin >> Country;
+                cout << "Enter city:" << endl;
+                cin >> City;
+                cout << "Enter telephone number:" << endl;
+                cin >> TelephoneNumber;
+                people.push_back(new Person(fullName, d, m, y, Country, City, TelephoneNumber));
+                cout << "Person created!" << endl;
+                cout << "------------------------------------------" << endl;
+            }
+            else if (choice == 2) {
+                string fullName, Country, City, TelephoneNumber, specialization, category, degree;
+                int d, m, y, numberOfPatients, salary;
+                cout << "Enter full name:" << endl;
+                cin >> fullName;
+                cout << "Enter date of birth:" << endl;
+                cin >> d >> m >> y;
+                cout << "Enter country:" << endl;
+                cin >> Country;
+                cout << "Enter city:" << endl;
+                cin >> City;
+                cout << "Enter telephone number:" << endl;
+                cin >> TelephoneNumber;
+                cout << "Enter specialization:" << endl;
+                cin >> specialization;
+                cout << "Enter number of patients:" << endl;
+                cin >> numberOfPatients;
+                cout << "Enter salary:" << endl;
+                cin >> salary;
+                cout << "Enter category:" << endl;
+                cout << "General, Specialist, Expert" << endl;
+                cin >> category;
+                cout << "Enter degree:" << endl;
+                cout << "Junior, Middle, Senior" << endl;
+                cin >> degree;
+                doctors.push_back(new Doctor(fullName, d, m, y, Country, City, TelephoneNumber, specialization, numberOfPatients, salary, category, degree));
+                cout << "Doctor created!" << endl;
+                cout << "------------------------------------------" << endl;
+            }
+            else if(choice == 3)
+            {
+                string fullName, Country, City, TelephoneNumber, rank, armament;
+                int d, m, y, serviceLife;
+                cout << "Enter full name:" << endl;
+                cin >> fullName;
+                cout << "Enter date of birth:" << endl;
+                cin >> d >> m >> y;
+                cout << "Enter country:" << endl;
+                cin >> Country;
+                cout << "Enter city:" << endl;
+                cin >> City;
+                cout << "Enter telephone number:" << endl;
+                cin >> TelephoneNumber;
+                cout << "Enter rank:" << endl;
+                cin >> rank;
+                cout << "Enter service life:" << endl;
+                cin >> serviceLife;
+                cout << "Enter armament:" << endl;
+                cin >> armament;
+                cout << "Enter military service type:" << endl;
+                cout << "Army - 0, Reserve - 1, Contract - 2" << endl;
+                int militaryServiceType;
+                cin >> militaryServiceType;
+                soldiers.push_back(new Soldier(fullName, d, m, y, Country, City, TelephoneNumber, rank,
+                                               serviceLife, armament, (Soldier::militaryService)militaryServiceType));
+                cout << "Soldier created!" << endl;
+                cout << "------------------------------------------" << endl;
+            }
+            else if (choice == 4)
+            {
+                if(people.size() == 0)
                 {
-                    Doctor *temp = doc[i];
-                    doc[i] = doc[j];
-                    doc[j] = temp;
+                    cout << "No people!" << endl;
+                }
+                else {
+                    for (int i = 0; i < people.size(); i++) {
+                        cout << "Person " << i+1 << ": " << endl << people[i]->printInfo() << endl;
+                        cout << "---------------------------------------------------------" << endl;
+                    }
+                }
+                if(doctors.size() == 0)
+                {
+                    cout << "No doctors!" << endl;
+                }
+                else {
+                    for (int i = 0; i < doctors.size(); i++) {
+                        cout << "Doctor " << i+1 << ": " << endl << doctors[i]->printInfo() << endl;
+                        cout << "---------------------------------------------------------" << endl;
+                    }
+                }
+                if(soldiers.size() == 0)
+                {
+                    cout << "No soldiers!" << endl;
+                }
+                else {
+                    for (int i = 0; i < soldiers.size(); i++) {
+                        cout << "Soldier " << i+1 << ": " << endl << soldiers[i]->printInfo() << endl;
+                        cout << "---------------------------------------------------------" << endl;
+                    }
                 }
             }
-        }
-
-        cout << "Doctors with specialization General: " << endl;
-        for (int i = 0; i < 5; i++)
-        {
-            if (doc[i]->getSpecialization() == "General")
+            else
             {
-                cout << doc[i]->printInfoAboutDoctor() << "\n\n\n";
+                flag = false;
             }
         }
-        int s;
-        cin >> s;
-        cout << string(100, '\n');
-        Soldier sol1("Ivanov Ivan Ivanovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "None", 0, "Glock", Soldier::army);
-        Soldier sol2("Petrov Petr Petrovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "None", 0, "Shooting knife", Soldier::reserve);
-        Soldier sol3("Sidorov Sidor Sidorovich", 1, 1, 1990, "Ukraine", "Lviv", "098-765-43-21", "None", 0, "AK-47", Soldier::contract);
-        Soldier *sol[3] = {&sol1, &sol2, &sol3};
-        for (int i = 0; i < 3; i++)
-        {
-            cout << sol[i]->printInfoAboutSoldier() << "\n\n\n";
-        }
-        sol1.fight();
-        sol2.fight();
-        for (int i = 0; i < 3; i++)
-        {
-            cout << sol[i]->printInfoAboutSoldier() << "\n\n\n";
-        }
-
-
     }
     catch (exception& ex)
     {
